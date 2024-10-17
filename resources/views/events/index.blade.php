@@ -15,21 +15,33 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="mb-4 flex justify-between items-center">
+                    <div class="mb-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
                         <div>
-                            <a href="{{ route('events.index') }}"
+                            <a href="{{ route('events.index', ['search' => request('search')]) }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 active:bg-gray-700 focus:outline-none focus:border-gray-700 focus:ring focus:ring-gray-300 disabled:opacity-25 transition {{ request('filter') == '' ? 'bg-gray-800' : '' }}">
                                 All Events
                             </a>
-                            <a href="{{ route('events.index', ['filter' => 'upcoming']) }}"
+                            <a href="{{ route('events.index', ['filter' => 'upcoming', 'search' => request('search')]) }}"
                                 class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-500 active:bg-green-700 focus:outline-none focus:border-green-700 focus:ring focus:ring-green-300 disabled:opacity-25 transition {{ request('filter') == 'upcoming' ? 'bg-green-800' : '' }}">
                                 Upcoming Events
                             </a>
-                            <a href="{{ route('events.index', ['filter' => 'past']) }}"
+                            <a href="{{ route('events.index', ['filter' => 'past', 'search' => request('search')]) }}"
                                 class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-300 disabled:opacity-25 transition {{ request('filter') == 'past' ? 'bg-red-800' : '' }}">
                                 Past Events
                             </a>
                         </div>
+                        <form action="{{ route('events.index') }}" method="GET" class="w-full sm:w-auto">
+                            <input type="hidden" name="filter" value="{{ request('filter') }}">
+                            <div class="flex items-center">
+                                <input type="text" name="search" placeholder="Search events..."
+                                       value="{{ request('search') }}"
+                                       class="rounded-l-md w-full sm:w-64 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 shadow-sm">
+                                <button type="submit"
+                                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-r-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-300 disabled:opacity-25 transition">
+                                    Search
+                                </button>
+                            </div>
+                        </form>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -94,7 +106,7 @@
                         </table>
                     </div>
                     <div class="mt-4">
-                        {{ $events->links() }}
+                        {{ $events->appends(['filter' => request('filter'), 'search' => request('search')])->links() }}
                     </div>
                 </div>
             </div>

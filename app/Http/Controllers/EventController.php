@@ -13,18 +13,20 @@ public function index(Request $request)
 {
     $query = Event::query();
 
-    if ($request->has('filter')) {
-        $filter = $request->input('filter');
-        $today = now()->startOfDay();
-
-        if ($filter === 'upcoming') {
-            $query->where('tanggal', '>=', $today);
-        } elseif ($filter === 'past') {
-            $query->where('tanggal', '<', $today);
-        }
+    // Apply filter
+    if ($request->filter === 'upcoming') {
+        $query->where('tanggal', '>=', now());
+    } elseif ($request->filter === 'past') {
+        $query->where('tanggal', '<', now());
     }
 
-    $events = $query->orderBy('tanggal', 'asc')->paginate(10);
+    // Apply search
+    if ($request->has('search')) {
+        $search = $request->search;
+        $query->where('nama', 'like', "%{$search}%");
+    }
+
+    $events = $query->latest()->paginate(10);
     return view('events.index', compact('events'));
 }
 
